@@ -40,35 +40,39 @@ public class Script {
 	//------------------------------------------------------------
     // Constructors
     public Script() {
-        // WRITE THE REST OF CODE 
+        // WRITE THE REST OF CODE
+        questions = new Question[QUESTION_COUNT];
     }
 
     public Script(String name){
         // WRITE THE REST OF CODE
+        this.name = name;
+        questions = new Question[QUESTION_COUNT];
     }
     public Script(Question[] questions) {
         // WRITE THE REST OF CODE
+        this.questions = questions;
     }
 
 	//------------------------------------------------------------
 	// GETTER AND SETTER
 	
     public String getName(){
-      
+      return this.name;
     }
 
     public void setName(String value){
-        
+        this.name = value;
     }
 
     public boolean getMarked ()
     {
- 
+        return this.marked;
     }
 
     public void setMarked(boolean value)
     {
- 
+        this.marked = value;
     }
 
     public Question[] getQuestions() {
@@ -76,25 +80,30 @@ public class Script {
     }
 
     public void setQuestions(Question[] questions) {
-        
+        this.questions = questions;
     }
     public void setQuestion(int ind, Question question){
-
+        this.questions[ind] =  question;
     }
 	
 	//------------------------------------------------------------
 	// This function return index of an unmarked question in the script, if all scrips are marked, return -1. 
     public int findQuestion()
     {
+        for (int i = 0; i < questions.length; i++) {
+            if (!questions[i].getMarked()) {
+                return i;
+            }
+        }
         return -1;
        
     }
     public Question getQuestion(int ind) {
- 
+        return this.questions[ind];
     }
 
     public void addQuestion(int ind, Question question){
-
+        this.questions[ind] = question;
     }
     // toString method
     @Override

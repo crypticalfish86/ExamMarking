@@ -30,6 +30,8 @@ Methods:
 		startMarking() - Creates Marker objects and starts the marking process in multiple threads.
  */
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -153,9 +155,20 @@ class ModuleCoordinator {
         this.markersCount = markersCount;
     }
 
+    /**
+     * Returns the list of script objects
+     * @return
+     * list of script objects
+     */
     public Script[] getListScripts() {
         return listScripts;
     }
+
+    /**
+     * sets the list of script objects
+     * @param listScripts
+     * list of script objects
+     */
     public void setListScripts(Script[] listScripts) {
         this.listScripts = listScripts;
     }
@@ -193,16 +206,46 @@ class ModuleCoordinator {
 	//------------------------------------------------------------
 
     
-    /* 
+    /*
     Method to load all scripts from a directory
     The method loops through all files and selects those that contain "_scripts" in their name.
 	Ensures proper format and values!
 	It ensures that the number of scripts loaded does not exceed maximumScripts.
     Use FileReaderValidator class to load a script please
     */
+    //TODO this solution creates an array list and then converts it to an array (this was done because we don't want null values in the array, before submission come up with a better solution
     public void loadAllScripts(String dirPath) {
-       // WRITE THE REST OF CODE
-        System.out.println(ind + SCRIPTS_LOADED_MSG);
+       // TODO WRITE THE REST OF CODE
+        //Create a list of filepaths
+        File directory = new File(dirPath);
+        String[] scriptFiles = directory.list((dir, name) -> name.contains("_scripts"));
+
+        if (scriptFiles == null || scriptFiles.length == 0) {
+            System.out.println(NO_FILES_FOUND_MSG);
+            return;
+        }
+
+        //ensure the scripts don't go over the maximum
+        String[] scriptFilePaths = new String[maximumScripts];
+        System.arraycopy(scriptFiles, 0, scriptFilePaths, 0, Math.min(maximumScripts, scriptFiles.length));
+
+
+        //load the scripts by filepath in FileReaderValidator.readAndValidateFile (which should return a script or null)
+        ArrayList<Script> listScriptObjects = new ArrayList<Script>();
+        for (int i = 0; i < scriptFilePaths.length; i++) {
+            Script script = FileReaderValidator.readAndValidateFile(dirPath + File.separator + scriptFilePaths[i]);
+            if (script != null) {
+                listScriptObjects.add(script);
+            }
+        }
+
+        //add it to the listScripts array
+        listScripts = new Script[listScriptObjects.size()];
+        for (int i = 0; i < listScripts.length; i++) {
+            listScripts[i] = listScriptObjects.get(i);
+        }
+
+        System.out.println(SCRIPTS_LOADED_MSG);
     }
 
 

@@ -73,6 +73,8 @@ public class Marker implements Runnable {
     // Select a script randomly from remaining scripts
     public int selectScript() {
 	   // WRITE THE REST OF CODE
+        Random random = new Random();
+        return random.nextInt(0, remainingScripts.size());
     }
 
     
@@ -82,5 +84,7 @@ public class Marker implements Runnable {
 	   // WRITE THE REST OF CODE
     }
 
-     
+     public void run() {
+
+     }
 }

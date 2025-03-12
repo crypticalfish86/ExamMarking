@@ -20,12 +20,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class FileReaderValidator {
 
     // Helper method to check if the values are valid (A, B, or C)
+    //TODO "^[ABC]{3}$" <- valid regex for ABC
     private static boolean isValidValues(String values) {
-         
+         return false;
     }
 	
 	/*
@@ -43,8 +46,35 @@ public class FileReaderValidator {
  
 
         Script script = new Script(file.getName()); // Initialize the Script object
-       
+
 	   // WRITE THE REST OF CODE
+        try {
+            Scanner scanner = new Scanner(file);
+
+            //get outputs from the scanner of the script
+            ArrayList<String> outputs = new ArrayList<String>();
+            while (scanner.hasNextLine()) {
+                outputs.add(scanner.nextLine());
+            }
+
+
+            //turn the outputs into question objects (ignoring first index as that is "Question Values")
+
+            for (int i = 1; i < outputs.size(); i++) {
+                String[] question = outputs.get(i).split(" ");
+                String questionName = question[0];
+                String questionAnswer = question[1].matches("^[ABC]{3}$") ? question[1] : "AAA";
+
+                script.setQuestion(i - 1, new Question(questionName, questionAnswer));
+            }
+            System.out.println("script" + script);
+            return script;
+        } catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+
+        
     }
 
 
