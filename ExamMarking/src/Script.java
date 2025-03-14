@@ -83,23 +83,21 @@ public class Script {
         this.questions = questions;
     }
     public void setQuestion(int ind, Question question){
-        this.questions[ind] =  question;
+        this.questions[ind] = question;
     }
-	
+
+    public static int getQuestionCount() {
+        return QUESTION_COUNT;
+    }
 	//------------------------------------------------------------
 	// This function return index of an unmarked question in the script, if all scrips are marked, return -1. 
     public int findQuestion()
     {
-        for (int i = 0; i < questions.length; i++) {
-            if (!questions[i].getMarked()) {
-                return i;
-            }
-        }
         return -1;
        
     }
     public Question getQuestion(int ind) {
-        return this.questions[ind];
+        return questions[ind];
     }
 
     public void addQuestion(int ind, Question question){

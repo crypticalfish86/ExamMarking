@@ -20,15 +20,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class FileReaderValidator {
 
     // Helper method to check if the values are valid (A, B, or C)
-    //TODO "^[ABC]{3}$" <- valid regex for ABC
     private static boolean isValidValues(String values) {
-         return false;
+        return values.matches("^[ABC]{3}$");
     }
 	
 	/*
@@ -46,35 +44,35 @@ public class FileReaderValidator {
  
 
         Script script = new Script(file.getName()); // Initialize the Script object
-
+       
 	   // WRITE THE REST OF CODE
-        try {
+        try{
+
             Scanner scanner = new Scanner(file);
 
-            //get outputs from the scanner of the script
-            ArrayList<String> outputs = new ArrayList<String>();
+            //load the questions scanned from the file into a list
+            String[] questions = new String[Script.getQuestionCount() + 1];
+            int index = 0;
             while (scanner.hasNextLine()) {
-                outputs.add(scanner.nextLine());
+                questions[index] = scanner.nextLine();
+                index++;
             }
 
-
-            //turn the outputs into question objects (ignoring first index as that is "Question Values")
-
-            for (int i = 1; i < outputs.size(); i++) {
-                String[] question = outputs.get(i).split(" ");
+            /*turn the questions into question objects and add them into the script
+            (ignoring the first index as that is "Question Values" text in the file*/
+            for (int i = 1; i < questions.length; i++) {
+                String[] question = questions[i].split(" ");
                 String questionName = question[0];
-                String questionAnswer = question[1].matches("^[ABC]{3}$") ? question[1] : "AAA";
-
-                script.setQuestion(i - 1, new Question(questionName, questionAnswer));
+                String questionAnswerValues = isValidValues(question[1]) ? question[1] : "AAA";
+                script.addQuestion(i - 1, new Question(questionName, questionAnswerValues));
             }
-            System.out.println("script" + script);
             return script;
-        } catch (Exception e) {
+
+        }catch (Exception e) {
+
             System.err.println(e);
             return null;
         }
-
-        
     }
 
 

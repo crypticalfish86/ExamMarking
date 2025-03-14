@@ -22,19 +22,19 @@ Overall functionality of the project is as follow:
 		
 		
 Components
-	ModuleCoordinator.java – Manages script loading, marking coordination, and thread execution.
-	Marker.java – Represents individual markers that process scripts in parallel.
-	Script.java – Stores details of a single script and its associated questions.
-	Question.java – Represents an individual question within a script.
-	FileReaderValidator.java – Reads and validates script files, ensuring data integrity.
-	Main.java – The entry point of the program that initializes and runs the system.	
+	ModuleCoordinator.java - Manages script loading, marking coordination, and thread execution.
+	Marker.java - Represents individual markers that process scripts in parallel.
+	Script.java - Stores details of a single script and its associated questions.
+	Question.java - Represents an individual question within a script.
+	FileReaderValidator.java - Reads and validates script files, ensuring data integrity.
+	Main.java - The entry point of the program that initializes and runs the system.
 	
 Funcionality
-	Script Loading – ModuleCoordinator loads script files using FileReaderValidator.
-	Thread Initialization – Multiple Marker threads are created for grading.
-	Script Selection & Marking – Each marker picks a script, marks ungraded questions, and records results.
-	Synchronization – Semaphores prevent multiple markers from grading the same question simultaneously.
-	Saving Results – The final grading results are saved in a file for review.	
+	Script Loading - ModuleCoordinator loads script files using FileReaderValidator.
+	Thread Initialization - Multiple Marker threads are created for grading.
+	Script Selection & Marking - Each marker picks a script, marks ungraded questions, and records results.
+	Synchronization - Semaphores prevent multiple markers from grading the same question simultaneously.
+	Saving Results - The final grading results are saved in a file for review.
 	
 */
 public class Main {

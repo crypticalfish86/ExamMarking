@@ -30,8 +30,6 @@ Methods:
 		startMarking() - Creates Marker objects and starts the marking process in multiple threads.
  */
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -53,9 +51,6 @@ class ModuleCoordinator {
      
 	//------------------------------------------------------------
     // Constructor
-    /**
-     * Default constructor with default values for sleep time and maxScripts(not used in the coursework)
-     * */
     public ModuleCoordinator()
     {
         this.setMaximumScripts(10);
@@ -67,9 +62,6 @@ class ModuleCoordinator {
         
     }
 
-    /**
-     * Default constructor with default values for  maxScripts(not used in the coursework)
-     * */
     public ModuleCoordinator(int sleepTime)
     {
         this.setMaximumScripts(10);
@@ -79,10 +71,7 @@ class ModuleCoordinator {
         }      
         
     }
-
-    /**
-     * Constructor that initialises a module coordinator (for use in the coursework)
-     * */
+    
     public ModuleCoordinator(int sleepTime , int maximumScripts)
     {
         this.setSleepTime(sleepTime);
@@ -98,77 +87,34 @@ class ModuleCoordinator {
 	
 	//------------------------------------------------------------
     // GETTER AND SETTER 
-
-    /**
-     * Sets the maximum scripts
-     * @param maximumScripts
-     * The total script count to be marked
-     */
+    
     public  void setMaximumScripts(int maximumScripts){
         ModuleCoordinator.maximumScripts = maximumScripts;
         listScripts = new Script[maximumScripts];
         scriptSemaphores = new Semaphore[maximumScripts];
     }
-
-    /**
-     * gets the maximum scripts
-     * @return
-     * The total script count to be marked
-     */
     public int getMaximumScripts(){
         return ModuleCoordinator.maximumScripts;
     }
 
-    /**
-     * gets the sleep time
-     * @return
-     * The sleep time in milliseconds
-     */
     public int getSleepTime (){
         return this.sleepTime;
     }
-
-    /**
-     * sets the sleep time
-     * @param value
-     * The sleep time in milliseconds
-     */
     public void setSleepTime (int value){
         this.sleepTime = value;
-    }
-
-    /**
-     * gets the total number of markers (threads marking scripts)
-     * @return
-     * The total number of markers (threads marking scripts)
-     */
+    } 
+  
     public int getMarkersCount() {
         return markersCount;
     }
 
-    /**
-     * sets the total number of markers (threads marking scripts)
-     * @param markersCount
-     * The total number of markers (threads marking scripts)
-     */
     public void setMarkersCount(int markersCount) {
         this.markersCount = markersCount;
     }
 
-    /**
-     * Returns the list of script objects
-     * @return
-     * list of script objects
-     */
     public Script[] getListScripts() {
         return listScripts;
     }
-
-    /**
-     * sets the list of script objects
-     * @param listScripts
-     * list of script objects
-     */
     public void setListScripts(Script[] listScripts) {
         this.listScripts = listScripts;
     }
@@ -206,45 +152,60 @@ class ModuleCoordinator {
 	//------------------------------------------------------------
 
     
-    /*
+    /* 
     Method to load all scripts from a directory
     The method loops through all files and selects those that contain "_scripts" in their name.
 	Ensures proper format and values!
 	It ensures that the number of scripts loaded does not exceed maximumScripts.
     Use FileReaderValidator class to load a script please
     */
-    //TODO this solution creates an array list and then converts it to an array (this was done because we don't want null values in the array, before submission come up with a better solution
     public void loadAllScripts(String dirPath) {
-       // TODO WRITE THE REST OF CODE
-        //Create a list of filepaths
+       //TODO WRITE THE REST OF CODE
+        //initialise a directory file and list of filepaths that contain "scripts" in them
         File directory = new File(dirPath);
-        String[] scriptFiles = directory.list((dir, name) -> name.contains("_scripts"));
+        String[] scriptFilePaths = directory.list((dir, name) -> name.contains("_scripts"));
 
-        if (scriptFiles == null || scriptFiles.length == 0) {
+        //check if there are "_scripts" files found in that directory
+        if (scriptFilePaths == null || scriptFilePaths.length == 0) {
             System.out.println(NO_FILES_FOUND_MSG);
             return;
         }
 
-        //ensure the scripts don't go over the maximum
-        String[] scriptFilePaths = new String[maximumScripts];
-        System.arraycopy(scriptFiles, 0, scriptFilePaths, 0, Math.min(maximumScripts, scriptFiles.length));
+
+        //trim the list so that it doesn't go over the maximum
+        String[] trimmedScriptFilePaths;
+        if (scriptFilePaths.length > maximumScripts) {
+            trimmedScriptFilePaths = new String[maximumScripts];
+            System.arraycopy(scriptFilePaths, 0, trimmedScriptFilePaths, 0, maximumScripts);
+        }
+        else {
+            trimmedScriptFilePaths = scriptFilePaths;
+        }
 
 
-        //load the scripts by filepath in FileReaderValidator.readAndValidateFile (which should return a script or null)
-        ArrayList<Script> listScriptObjects = new ArrayList<Script>();
-        for (int i = 0; i < scriptFilePaths.length; i++) {
-            Script script = FileReaderValidator.readAndValidateFile(dirPath + File.separator + scriptFilePaths[i]);
-            if (script != null) {
-                listScriptObjects.add(script);
+        //create an initial list of script objects (with null values)
+        Script[] initialScriptList = new Script[trimmedScriptFilePaths.length];
+        for (int i = 0; i < initialScriptList.length; i++) {
+            initialScriptList[i] = FileReaderValidator.readAndValidateFile(dirPath + File.separator + trimmedScriptFilePaths[i]);
+        }
+
+
+        //remove null values from the script array and assign the script objects to "listScripts" attribute
+        int nonNullCount = 0;
+        for (int i = 0; i < initialScriptList.length; i++) {
+            if (initialScriptList[i] != null) {
+                nonNullCount++;
             }
         }
-
-        //add it to the listScripts array
-        listScripts = new Script[listScriptObjects.size()];
-        for (int i = 0; i < listScripts.length; i++) {
-            listScripts[i] = listScriptObjects.get(i);
+        listScripts = new Script[nonNullCount];
+        int index = 0;
+        for (Script script : initialScriptList) {
+            if (script != null) {
+                System.out.println(script);
+                listScripts[index] = script;
+                index++;
+            }
         }
-
         System.out.println(SCRIPTS_LOADED_MSG);
     }
 
