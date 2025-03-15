@@ -30,6 +30,7 @@ Methods:
 		startMarking() - Creates Marker objects and starts the marking process in multiple threads.
  */
 import java.io.File;
+import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -160,7 +161,7 @@ class ModuleCoordinator {
     Use FileReaderValidator class to load a script please
     */
     public void loadAllScripts(String dirPath) {
-       //TODO WRITE THE REST OF CODE
+
         //initialise a directory file and list of filepaths that contain "scripts" in them
         File directory = new File(dirPath);
         String[] scriptFilePaths = directory.list((dir, name) -> name.contains("_scripts"));
@@ -201,7 +202,6 @@ class ModuleCoordinator {
         int index = 0;
         for (Script script : initialScriptList) {
             if (script != null) {
-                System.out.println(script);
                 listScripts[index] = script;
                 index++;
             }
@@ -226,11 +226,61 @@ class ModuleCoordinator {
             }
     }
 
+    //mark a specific script
+    //TODO figure out if this is how we're supposed to do it
+    public void markTheScript(int ind) throws InterruptedException {
+        scriptSemaphores[ind].acquire();
+        Script script = listScripts[ind];
+        //TODO find out how to actually mark the script
+        if (!script.getMarked()) {
+            int questionIndex = script.findQuestion();
+            Question question = script.getQuestion(questionIndex);
+            question.setMarkedBy("");
+            script.checkAndUpdateAllQuestionsMarked();
+        }
+        scriptSemaphores[ind].release();
+
+    }
+
     // Method to start marking a specific script
     public void startMarking() {
+         // TODO WRITE THE REST OF CODE
 
-         // WRITE THE REST OF CODE
+        //instantiate marker objects
+        Thread marker1 = new Thread(new Marker(this, maximumScripts, sleepTime));
+        Thread marker2 = new Thread(new Marker(this, maximumScripts, sleepTime));
+        Thread marker3 = new Thread(new Marker(this, maximumScripts, sleepTime));
+        Thread marker4 = new Thread(new Marker(this, maximumScripts, sleepTime));
 
+        //start marking
+        marker1.start();
+        marker2.start();
+        marker3.start();
+        marker4.start();
+
+        //TODO initialise in this thread too FIGURE OUT HOW TO MAKE THIS ONE RANDOM
+        for (int i = 0; i < maximumScripts; i++) {
+            try{
+                markTheScript(i);
+            } catch (InterruptedException e) {
+                System.err.println(e);
+            }
+        }
+
+
+        //join all threads with this thread
+        try{
+            marker1.join();
+            marker2.join();
+            marker3.join();
+            marker4.join();
+        }
+        catch (Exception e) {
+            System.err.println(e);
+        }
+
+
+        //TODO check if all scripts are marked
     }
  
 

@@ -40,17 +40,14 @@ public class Script {
 	//------------------------------------------------------------
     // Constructors
     public Script() {
-        // WRITE THE REST OF CODE
         questions = new Question[QUESTION_COUNT];
     }
 
     public Script(String name){
-        // WRITE THE REST OF CODE
         this.name = name;
         questions = new Question[QUESTION_COUNT];
     }
     public Script(Question[] questions) {
-        // WRITE THE REST OF CODE
         this.questions = questions;
     }
 
@@ -90,9 +87,14 @@ public class Script {
         return QUESTION_COUNT;
     }
 	//------------------------------------------------------------
-	// This function return index of an unmarked question in the script, if all scrips are marked, return -1. 
+	// This function return index of an unmarked question in the script, if all questions are marked, return -1.
     public int findQuestion()
     {
+        for (int i = 0; i < QUESTION_COUNT; i++) {
+            if (!questions[i].getMarked()) {
+                return i;
+            }
+        }
         return -1;
        
     }
@@ -103,6 +105,19 @@ public class Script {
     public void addQuestion(int ind, Question question){
         this.questions[ind] = question;
     }
+
+    //check if all questions are marked and if so set "marked" to true
+    public void checkAndUpdateAllQuestionsMarked() {
+        boolean allMarked = true;
+        for (int i = 0; i < questions.length; i++) {
+            if (!questions[i].getMarked()) {
+                allMarked = false;
+            }
+        }
+        this.marked = allMarked;
+    }
+
+
     // toString method
     @Override
     public String toString() {

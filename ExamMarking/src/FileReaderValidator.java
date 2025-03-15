@@ -44,8 +44,7 @@ public class FileReaderValidator {
  
 
         Script script = new Script(file.getName()); // Initialize the Script object
-       
-	   // WRITE THE REST OF CODE
+
         try{
 
             Scanner scanner = new Scanner(file);

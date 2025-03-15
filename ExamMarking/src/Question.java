@@ -90,6 +90,7 @@ public class Question {
     }
 
     public void setMarkedBy(String markedBy) {
+        this.marked = true;
         this.markedBy = markedBy;
     }
  

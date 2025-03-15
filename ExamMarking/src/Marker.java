@@ -39,7 +39,7 @@ public class Marker implements Runnable {
     private ModuleCoordinator moduleCoordinator;
 	private int maximumScripts;
 	private int sleepTime;
-    private String markerName = "Hassan";
+    private String markerName = "";
     
     private List<Integer> remainingScripts = new ArrayList<>();
     
@@ -47,44 +47,114 @@ public class Marker implements Runnable {
 
     // Constructors
 	public Marker(){
-	   // WRITE THE REST OF CODE
+	   // TODO WRITE THE REST OF CODE FIGURE OUT HOW AN INDEPENDENT MARKER THREAD WOULD WORK
 	}
     public Marker(ModuleCoordinator moduleCoordinator) {
-	   // WRITE THE REST OF CODE
+	   // TODO WRITE THE REST OF CODE
+        this.moduleCoordinator = moduleCoordinator;
+        int numberOfScripts = moduleCoordinator.listScripts.length;
+        for (int i = 0; i < numberOfScripts; i++) {
+            remainingScripts.add(i);
+        }
     }
     public Marker(ModuleCoordinator moduleCoordinator, int maximumScripts, int sleepTime) {
-	   // WRITE THE REST OF CODE
+	   // TODO WRITE THE REST OF CODE
+        this.moduleCoordinator = moduleCoordinator;
+        this.maximumScripts = maximumScripts;
+        this.sleepTime = sleepTime;
+        int numberOfScripts = moduleCoordinator.listScripts.length;
+        for (int i = 0; i < numberOfScripts; i++) {
+            remainingScripts.add(i);
+        }
     }
     public Marker(ModuleCoordinator moduleCoordinator, int maximumScripts, int sleepTime, String markerName) {
-	   // WRITE THE REST OF CODE
+	   // TODO WRITE THE REST OF CODE
+        this.moduleCoordinator = moduleCoordinator;
+        this.maximumScripts = maximumScripts;
+        this.sleepTime = sleepTime;
+        this.markerName = markerName;
+        int numberOfScripts = moduleCoordinator.listScripts.length;
+        for (int i = 0; i < numberOfScripts; i++) {
+            remainingScripts.add(i);
+        }
     }
 	
 //------------------------------------------------------------
-    // GETTER AND SETTER 
- 
- 	// WRITE THE CODE HERE
+    // GETTER AND SETTER
+
+    public int getSleepTime() {
+        return sleepTime;
+    }
+
+    public void setSleepTime(int sleepTime) {
+        this.sleepTime = sleepTime;
+    }
+
+    public String getMarkerName() {
+        return markerName;
+    }
+
+    public void setMarkerName(String markerName) {
+        this.markerName = markerName;
+    }
+
+    public int getMaximumScripts() {
+        return maximumScripts;
+    }
+
+    public void setMaximumScripts(int maximumScripts) {
+        this.maximumScripts = maximumScripts;
+    }
+
+    // WRITE THE CODE HERE
 
 //------------------------------------------------------------
     // Remove a script from the remaining scripts
     public void removeScript(int ind) {
-	   // WRITE THE REST OF CODE
+	   // TODO WRITE THE REST OF CODE
     }
 
     // Select a script randomly from remaining scripts
     public int selectScript() {
-	   // WRITE THE REST OF CODE
+	   // TODO WRITE THE REST OF CODE
+        if(remainingScripts.isEmpty()) {
+            return -1;
+        }
         Random random = new Random();
-        return remainingScripts.get(random.nextInt(0, remainingScripts.size()));
+        return remainingScripts.get(random.nextInt(remainingScripts.size()));
     }
 
     
 
     // Mark the script at a given index
     public void markTheScript(int ind) throws InterruptedException {
-	   // WRITE THE REST OF CODE
+	   // TODO WRITE THE REST OF CODE
+        moduleCoordinator.scriptSemaphores[ind].acquire();
+        Script script = moduleCoordinator.listScripts[ind];
+        //TODO find out how to actually mark the script
+        if (!script.getMarked()) {
+            int questionIndex = script.findQuestion();
+            Question question = script.getQuestion(questionIndex);
+            question.setMarkedBy(this.markerName);
+            script.checkAndUpdateAllQuestionsMarked();
+        }
+        moduleCoordinator.scriptSemaphores[ind].release();
+
     }
 
+    //Runs through the remaining scripts marking one question from each until none are left
      public void run() {
+        Random random = new Random();
+        while (!remainingScripts.isEmpty()){
+            int randomIndex = random.nextInt(remainingScripts.size());
+            int scriptIndex = remainingScripts.remove(randomIndex);
+
+            try{
+                markTheScript(scriptIndex);
+            } catch (InterruptedException e) {
+                System.err.println("Thread interrupted: " + e);
+            }
+        }
 
      }
 }
