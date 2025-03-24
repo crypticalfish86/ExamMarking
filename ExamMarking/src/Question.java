@@ -89,6 +89,7 @@ public class Question {
         return markedBy;
     }
 
+    /*Mark a question (to be called by a Marker object when marking)*/
     public void setMarkedBy(String markedBy) {
         this.marked = true;
         this.markedBy = markedBy;

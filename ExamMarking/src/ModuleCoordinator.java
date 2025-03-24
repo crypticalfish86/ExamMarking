@@ -226,61 +226,31 @@ class ModuleCoordinator {
             }
     }
 
-    //mark a specific script
-    //TODO figure out if this is how we're supposed to do it
-    public void markTheScript(int ind) throws InterruptedException {
-        scriptSemaphores[ind].acquire();
-        Script script = listScripts[ind];
-        //TODO find out how to actually mark the script
-        if (!script.getMarked()) {
-            int questionIndex = script.findQuestion();
-            Question question = script.getQuestion(questionIndex);
-            question.setMarkedBy("");
-            script.checkAndUpdateAllQuestionsMarked();
-        }
-        scriptSemaphores[ind].release();
-
-    }
-
     // Method to start marking a specific script
     public void startMarking() {
-         // TODO WRITE THE REST OF CODE
 
-        //instantiate marker objects
-        Thread marker1 = new Thread(new Marker(this, maximumScripts, sleepTime));
-        Thread marker2 = new Thread(new Marker(this, maximumScripts, sleepTime));
-        Thread marker3 = new Thread(new Marker(this, maximumScripts, sleepTime));
-        Thread marker4 = new Thread(new Marker(this, maximumScripts, sleepTime));
+        //instantiate marker threads
+        Thread[] markerThreads = new Thread[markersCount];
+        for (int i = 0; i < markerThreads.length; i++) {
+            markerThreads[i] = new Thread(new Marker(this, maximumScripts, sleepTime));
+        }
+
 
         //start marking
-        marker1.start();
-        marker2.start();
-        marker3.start();
-        marker4.start();
-
-        //TODO initialise in this thread too FIGURE OUT HOW TO MAKE THIS ONE RANDOM
-        for (int i = 0; i < maximumScripts; i++) {
-            try{
-                markTheScript(i);
-            } catch (InterruptedException e) {
-                System.err.println(e);
-            }
+        for (int i = 0; i < markerThreads.length; i++) {
+            markerThreads[i].start();
         }
 
 
         //join all threads with this thread
         try{
-            marker1.join();
-            marker2.join();
-            marker3.join();
-            marker4.join();
+            for (int i = 0; i < markerThreads.length; i++) {
+                markerThreads[i].join();
+            }
         }
         catch (Exception e) {
             System.err.println(e);
         }
-
-
-        //TODO check if all scripts are marked
     }
  
 

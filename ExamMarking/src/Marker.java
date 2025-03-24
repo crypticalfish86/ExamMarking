@@ -39,18 +39,19 @@ public class Marker implements Runnable {
     private ModuleCoordinator moduleCoordinator;
 	private int maximumScripts;
 	private int sleepTime;
-    private String markerName = "";
+    private String markerName = ""; //had to remove "hassan" as it failed autograder tests which required empty strings
     
     private List<Integer> remainingScripts = new ArrayList<>();
     
 //------------------------------------------------------------
 
     // Constructors
+
+    //Empty constructor for if you want to set values of stuff later
 	public Marker(){
-	   // TODO WRITE THE REST OF CODE FIGURE OUT HOW AN INDEPENDENT MARKER THREAD WOULD WORK
+
 	}
     public Marker(ModuleCoordinator moduleCoordinator) {
-	   // TODO WRITE THE REST OF CODE
         this.moduleCoordinator = moduleCoordinator;
         int numberOfScripts = moduleCoordinator.listScripts.length;
         for (int i = 0; i < numberOfScripts; i++) {
@@ -58,7 +59,6 @@ public class Marker implements Runnable {
         }
     }
     public Marker(ModuleCoordinator moduleCoordinator, int maximumScripts, int sleepTime) {
-	   // TODO WRITE THE REST OF CODE
         this.moduleCoordinator = moduleCoordinator;
         this.maximumScripts = maximumScripts;
         this.sleepTime = sleepTime;
@@ -68,7 +68,6 @@ public class Marker implements Runnable {
         }
     }
     public Marker(ModuleCoordinator moduleCoordinator, int maximumScripts, int sleepTime, String markerName) {
-	   // TODO WRITE THE REST OF CODE
         this.moduleCoordinator = moduleCoordinator;
         this.maximumScripts = maximumScripts;
         this.sleepTime = sleepTime;
@@ -106,32 +105,27 @@ public class Marker implements Runnable {
         this.maximumScripts = maximumScripts;
     }
 
-    // WRITE THE CODE HERE
+    public ModuleCoordinator getModuleCoordinator() {
+        return moduleCoordinator;
+    }
+
+    public void setModuleCoordinator(ModuleCoordinator moduleCoordinator) {
+        this.moduleCoordinator = moduleCoordinator;
+        int numberOfScripts = moduleCoordinator.listScripts.length;
+        for (int i = 0; i < numberOfScripts; i++) {
+            remainingScripts.add(i);
+        }
+    }
+
 
 //------------------------------------------------------------
-    // Remove a script from the remaining scripts
-    public void removeScript(int ind) {
-	   // TODO WRITE THE REST OF CODE
-    }
-
-    // Select a script randomly from remaining scripts
-    public int selectScript() {
-	   // TODO WRITE THE REST OF CODE
-        if(remainingScripts.isEmpty()) {
-            return -1;
-        }
-        Random random = new Random();
-        return remainingScripts.get(random.nextInt(remainingScripts.size()));
-    }
-
     
 
     // Mark the script at a given index
     public void markTheScript(int ind) throws InterruptedException {
-	   // TODO WRITE THE REST OF CODE
+
         moduleCoordinator.scriptSemaphores[ind].acquire();
         Script script = moduleCoordinator.listScripts[ind];
-        //TODO find out how to actually mark the script
         if (!script.getMarked()) {
             int questionIndex = script.findQuestion();
             Question question = script.getQuestion(questionIndex);
@@ -139,7 +133,6 @@ public class Marker implements Runnable {
             script.checkAndUpdateAllQuestionsMarked();
         }
         moduleCoordinator.scriptSemaphores[ind].release();
-
     }
 
     //Runs through the remaining scripts marking one question from each until none are left
@@ -157,4 +150,5 @@ public class Marker implements Runnable {
         }
 
      }
+
 }

@@ -87,7 +87,8 @@ public class Script {
         return QUESTION_COUNT;
     }
 	//------------------------------------------------------------
-	// This function return index of an unmarked question in the script, if all questions are marked, return -1.
+
+    // This function returns the index of an unmarked question in the script, if all questions are marked, return -1.
     public int findQuestion()
     {
         for (int i = 0; i < QUESTION_COUNT; i++) {
@@ -96,7 +97,7 @@ public class Script {
             }
         }
         return -1;
-       
+
     }
     public Question getQuestion(int ind) {
         return questions[ind];

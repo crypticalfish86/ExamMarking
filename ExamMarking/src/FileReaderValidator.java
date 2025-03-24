@@ -61,6 +61,12 @@ public class FileReaderValidator {
             (ignoring the first index as that is "Question Values" text in the file*/
             for (int i = 1; i < questions.length; i++) {
                 String[] question = questions[i].split(" ");
+
+                //If the format of the question is incorrect return null
+                if(question.length != 2 || question[0].length() < 2 || question[0].charAt(0) != 'Q' || !Character.isDigit(question[0].charAt(1))) {
+                    return null;
+                }
+
                 String questionName = question[0];
                 String questionAnswerValues = isValidValues(question[1]) ? question[1] : "AAA";
                 script.addQuestion(i - 1, new Question(questionName, questionAnswerValues));
